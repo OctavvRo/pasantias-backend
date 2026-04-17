@@ -18,6 +18,29 @@ components:
         email: fake@example.com
         name: fake name
         role: user
+    Product:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+        category:
+          type: string
+        stock:
+          type: integer
+      example:
+        id: 60b9c534954b54139806c112
+        name: Teclado Mecánico
+        description: Teclado RGB con switches azules
+        price: 45.99
+        category: Periféricos
+        stock: 15
+
 
     Token:
       type: object
