@@ -29,6 +29,11 @@ const productSchema = new mongoose.Schema<IProductDoc, IProductModel>(
       required: true,
       default: 0,
     },
+    image: {
+      type: String,
+      required: false, // Cambialo a true si es estrictamente obligatorio
+      trim: true,
+    },
   },
   {
     timestamps: true,

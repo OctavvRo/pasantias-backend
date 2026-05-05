@@ -1,8 +1,10 @@
 import express, { Router } from 'express';
 import authRoute from './auth.route';
+import bidRoute from './bid.route';
 import docsRoute from './swagger.route';
 import userRoute from './user.route';
 import productRoute from './product.route';
+import auctionRoute from './auction.route';
 import config from '../../config/config';
 
 const router = express.Router();
@@ -24,6 +26,14 @@ const defaultIRoute: IRoute[] = [
   {
     path: '/products',
     route: productRoute,
+  },
+  {
+    path: '/auctions',
+    route: auctionRoute,
+  },
+  {
+    path: '/bids',
+    route: bidRoute,
   },
 ];
 

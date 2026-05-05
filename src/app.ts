@@ -6,6 +6,7 @@ import compression from 'compression';
 import cors from 'cors';
 import passport from 'passport';
 import httpStatus from 'http-status';
+import path from 'path';
 import config from './config/config';
 import { morgan } from './modules/logger';
 import { jwtStrategy } from './modules/auth';
@@ -14,6 +15,7 @@ import { ApiError, errorConverter, errorHandler } from './modules/errors';
 import routes from './routes/v1';
 
 const app: Express = express();
+const uploadsPath = path.resolve(process.cwd(), 'uploads');
 
 if (config.env !== 'test') {
   app.use(morgan.successHandler);
@@ -32,6 +34,10 @@ app.use(express.json());
 
 // parse urlencoded request body
 app.use(express.urlencoded({ extended: true }));
+
+// serve uploaded files
+app.use('/uploads', express.static(uploadsPath));
+app.use('/v1/uploads', express.static(uploadsPath));
 
 // sanitize request data
 app.use(xss());

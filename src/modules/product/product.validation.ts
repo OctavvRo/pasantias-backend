@@ -8,6 +8,7 @@ const createProductBody: Record<keyof NewCreatedProduct, any> = {
   price: Joi.number().required().min(0),
   category: Joi.string().required(),
   stock: Joi.number().required().integer().min(0),
+  image: Joi.string().required(),
 };
 
 export const createProduct = {
@@ -42,6 +43,7 @@ export const updateProduct = {
       price: Joi.number().min(0),
       category: Joi.string(),
       stock: Joi.number().integer().min(0),
+      image: Joi.string().required(),
     })
     .min(1),
 };

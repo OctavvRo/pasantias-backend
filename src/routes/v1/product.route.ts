@@ -2,18 +2,46 @@ import express, { Router } from 'express';
 import { validate } from '../../modules/validate';
 import { auth } from '../../modules/auth';
 import { productController, productValidation } from '../../modules/product';
+// 1. Importá tu middleware de multer
+import { upload } from '../../modules/upload/upload.middelware';
 
 const router: Router = express.Router();
 
+const getProductImagePath = (file: Express.Multer.File) => `/uploads/products/${file.filename}`;
+
 router
   .route('/')
-  .post(auth('manageProducts'), validate(productValidation.createProduct), productController.createProduct)
+  .post(
+    auth('manageProducts'),
+    upload.single('image'),
+    // 2. Middleware puente: pasamos el path del archivo al body para Joi
+    (req, _res, next) => {
+      if (req.file) {
+        req.body.image = getProductImagePath(req.file);
+      }
+      next();
+    },
+    validate(productValidation.createProduct),
+    productController.createProduct
+  )
   .get(auth(), validate(productValidation.getProducts), productController.getProducts);
 
 router
   .route('/:productId')
   .get(auth(), validate(productValidation.getProduct), productController.getProduct)
-  .patch(auth('manageProducts'), validate(productValidation.updateProduct), productController.updateProduct)
+  .patch(
+    auth('manageProducts'),
+    upload.single('image'),
+    // 3. Middleware puente también en el PATCH por si actualizan la imagen
+    (req, _res, next) => {
+      if (req.file) {
+        req.body.image = getProductImagePath(req.file);
+      }
+      next();
+    },
+    validate(productValidation.updateProduct),
+    productController.updateProduct
+  )
   .delete(auth('manageProducts'), validate(productValidation.deleteProduct), productController.deleteProduct);
 
 export default router;
@@ -37,7 +65,7 @@ export default router;
  *     requestBody:
  *       required: true
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
  *             type: object
  *             required:
@@ -58,19 +86,17 @@ export default router;
  *               stock:
  *                 type: integer
  *                 minimum: 0
- *             example:
- *               name: Teclado Mecánico
- *               description: Teclado RGB con switches azules
- *               price: 45.99
- *               category: Periféricos
- *               stock: 15
+ *               image:
+ *                 type: string
+ *                 format: binary
+ *                 description: Product image file
  *     responses:
  *       "201":
  *         description: Created
  *         content:
  *           application/json:
  *             schema:
- *                $ref: '#/components/schemas/Product'
+ *               $ref: '#/components/schemas/Product'
  *       "401":
  *         $ref: '#/components/responses/Unauthorized'
  *       "403":
@@ -108,7 +134,7 @@ export default router;
  *         schema:
  *           type: integer
  *           minimum: 1
- *         default: 10
+ *           default: 10
  *         description: Maximum number of products
  *       - in: query
  *         name: page
@@ -149,7 +175,7 @@ export default router;
 
 /**
  * @swagger
- * /products/{id}:
+ * /products/{productId}:
  *   get:
  *     summary: Get a product
  *     description: Any logged in user can fetch a product.
@@ -158,7 +184,7 @@ export default router;
  *       - bearerAuth: []
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: productId
  *         required: true
  *         schema:
  *           type: string
@@ -169,7 +195,7 @@ export default router;
  *         content:
  *           application/json:
  *             schema:
- *                $ref: '#/components/schemas/Product'
+ *               $ref: '#/components/schemas/Product'
  *       "401":
  *         $ref: '#/components/responses/Unauthorized'
  *       "403":
@@ -185,7 +211,7 @@ export default router;
  *       - bearerAuth: []
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: productId
  *         required: true
  *         schema:
  *           type: string
@@ -193,7 +219,7 @@ export default router;
  *     requestBody:
  *       required: true
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
  *             type: object
  *             properties:
@@ -208,19 +234,17 @@ export default router;
  *               stock:
  *                 type: integer
  *                 minimum: 0
- *             example:
- *               name: Teclado Mecánico
- *               description: Teclado RGB con switches azules
- *               price: 45.99
- *               category: Periféricos
- *               stock: 15
+ *               image:
+ *                 type: string
+ *                 format: binary
+ *                 description: New product image file
  *     responses:
  *       "200":
  *         description: OK
  *         content:
  *           application/json:
  *             schema:
- *                $ref: '#/components/schemas/Product'
+ *               $ref: '#/components/schemas/Product'
  *       "401":
  *         $ref: '#/components/responses/Unauthorized'
  *       "403":
@@ -236,13 +260,13 @@ export default router;
  *       - bearerAuth: []
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: productId
  *         required: true
  *         schema:
  *           type: string
  *         description: Product id
  *     responses:
- *       "200":
+ *       "204":
  *         description: No content
  *       "401":
  *         $ref: '#/components/responses/Unauthorized'

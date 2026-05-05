@@ -1,0 +1,103 @@
+{
+  "info": {
+    "name": "Auction API",
+    "description": "API endpoints for the Auction module. This collection assumes the auction router is mounted at /v1/auctions.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Create Auction",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"productId\": \"{{productId}}\",\n  \"minIncrement\": 10,\n  \"startTime\": \"2026-04-24T10:00:00.000Z\",\n  \"endTime\": \"2026-04-30T10:00:00.000Z\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/v1/auctions",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "v1",
+            "auctions"
+          ]
+        },
+        "description": "Creates a new auction using the product price as both base_price and initial current_price."
+      },
+      "response": []
+    },
+    {
+      "name": "Place Bid",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"auctionId\": \"{{auctionId}}\",\n  \"userId\": \"{{userId}}\",\n  \"bidAmount\": 150\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/v1/auctions/bid",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "v1",
+            "auctions",
+            "bid"
+          ]
+        },
+        "description": "Places a bid on an active auction. The bid must be greater than the current auction price."
+      },
+      "response": []
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{authToken}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "authToken",
+      "value": "REPLACE_WITH_YOUR_TOKEN",
+      "type": "string"
+    },
+    {
+      "key": "auctionId",
+      "value": "REPLACE_WITH_AUCTION_ID",
+      "type": "string"
+    },
+    {
+      "key": "productId",
+      "value": "REPLACE_WITH_PRODUCT_ID",
+      "type": "string"
+    },
+    {
+      "key": "userId",
+      "value": "REPLACE_WITH_USER_ID",
+      "type": "string"
+    }
+  ]
+}

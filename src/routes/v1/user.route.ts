@@ -206,6 +206,8 @@ export default router;
  *                 type: string
  *                 format: email
  *                 description: must be unique
+ *               isEmailVerified:
+ *                 type: boolean
  *               password:
  *                 type: string
  *                 format: password
@@ -214,6 +216,7 @@ export default router;
  *             example:
  *               name: fake name
  *               email: fake@example.com
+ *               isEmailVerified: true
  *               password: password1
  *     responses:
  *       "200":
